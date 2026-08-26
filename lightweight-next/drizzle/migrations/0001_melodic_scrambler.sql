@@ -1,0 +1,1 @@
+ALTER TABLE "loggedexercises" ADD COLUMN "performed_at" timestamp DEFAULT now() NOT NULL;
