@@ -3,10 +3,10 @@ pipeline {
 
     environment {
         NAME = "light-weight-v2"
-        VERSION = "${env.BUILD_ID}-${env.GIT_COMMIT}"
+        VERSION = "${env.BUILD_ID}"
         IMAGE_REPO = "softoloye"
         ARGO_TOKEN = credentials('argocd-token')
-        GITHUB_TOKEN = credentials('github-token')
+        GITHUB_TOKEN = credentials('Github-Token')
     }
 
     stages {
@@ -43,7 +43,7 @@ pipeline {
                         }
                     } else {
                         echo "Repo does not exists - Cloning the repo"
-                        sh "git clone -b feature-lightweight https://172.16.144.130:3000/fffffffff"
+                        sh "git clone -b update-argocd-config https://github.com/promisemorka/lightweight-next.git"        
                     }
                 }
             }
@@ -51,10 +51,44 @@ pipeline {
 
         stage("Update Manifest") {
             steps {
-                dir("gitops-argocd/lightweight-v2")
+                dir("lightweight-next/JenkinsDeployment") {
+                    sh "sed -i 's#promisemorka.*#${IMAGE_REPO}/${NAME}:${VERSION}#g' deployment.yaml"
+                    sh 'cat deployment.yaml'
+                }
             }
         }
 
+        stage("Commit and Push") {
+            steps {
+                dir("lightweight-next/JenkinsDeployment") {
+                    sh "git config --global user.email 'jenkins@ci.com'"
+                    sh "git remote set-url origin https://$GITHUB_TOKEN@github.com/promisemorka/lightweight-next.git"
+                    sh "git checkout update-argocd-config"
+                    sh "git add -A"
+                    sh 'git commit -m "updated image version for Build - $VERSION"'
+                    sh "git push origin update-argocd-config"
+                }
+            }
+        }
 
+        // stage("Raise PR") {
+        //     steps {
+        //         sh "bash pr.sh"
+        //     }
+
+        // }
+        stage("Raise PR") {
+            steps {
+                withEnv(["GH_TOKEN=${GITHUB_TOKEN}"]) {
+                    sh '''
+                        gh pr create \
+                        --base main \
+                        --head update-argocd-config \
+                        --title "Update image" \
+                        --body "Updated image version"
+                    '''
+                }
+            }
+        }
     }
 }

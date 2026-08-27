@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+
+metadata:
+  labels:
+    app: light-weight-v2
+  name: light-weight-v2-service
+
+spec:
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 80
+
+  selector:
+    app: light-weight-v2
+
+  type: NodePort
