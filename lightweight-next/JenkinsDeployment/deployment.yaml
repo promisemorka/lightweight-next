@@ -24,5 +24,8 @@ spec:
       containers:
       - image: softoloye/light-weight-v2:42
         name: light-weight-v2
+        env: 
+          - name: AUTH_TRUST_HOST
+            value: "true"
         ports: 
-          - containerPort: 80
+          - containerPort: 3000

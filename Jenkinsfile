@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        NAME = "light-weight-v2"
+        NAME = "light-weight-next"
         VERSION = "${env.BUILD_ID}"
         IMAGE_REPO = "softoloye"
         ARGO_TOKEN = credentials('argocd-token')
@@ -19,8 +19,9 @@ pipeline {
 
         stage('Build Image') {
             steps {
-                sh "docker build -t ${NAME} ."
-                sh "docker tag ${NAME}:latest ${IMAGE_REPO}/${NAME}:${VERSION}"
+                dir("lightweight-next") {
+                    sh "docker build -t ${IMAGE_REPO}/${NAME}:${VERSION} ."
+                }
             }
         }
 
@@ -52,19 +53,19 @@ pipeline {
         stage("Update Manifest") {
             steps {
                 dir("lightweight-next/JenkinsDeployment") {
-                    sh "sed -i 's#promisemorka.*#${IMAGE_REPO}/${NAME}:${VERSION}#g' deployment.yaml"
-                    sh 'cat deployment.yaml'
+                    sh "sed -i 's#image: .*#image: ${IMAGE_REPO}/${NAME}:${VERSION}#' deployment.yaml"
+                    sh "cat deployment.yaml"
                 }
             }
         }
 
         stage("Commit and Push") {
             steps {
-                dir("lightweight-next/JenkinsDeployment") {
+                dir("lightweight-next") {
                     sh "git config --global user.email 'jenkins@ci.com'"
                     sh "git remote set-url origin https://$GITHUB_TOKEN@github.com/promisemorka/lightweight-next.git"
                     sh "git checkout update-argocd-config"
-                    sh "git add -A"
+                    sh "git add JenkinsDeployment/deployment.yaml"
                     sh 'git commit -m "updated image version for Build - $VERSION"'
                     sh "git push origin update-argocd-config"
                 }
