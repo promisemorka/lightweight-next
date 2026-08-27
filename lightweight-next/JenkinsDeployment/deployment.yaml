@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  labels:
+    app: light-weight-v2
+  name: light-weight-v2
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: light-weight-v2
+
+  strategy: {}
+
+  template:
+    metadata:
+      labels:
+        app: light-weight-v2
+
+    spec:
+      containers:
+      - image: softoloye/light-weight-v2:42
+        name: light-weight-v2
+        env: 
+          - name: AUTH_TRUST_HOST
+            value: "true"
+        ports: 
+          - containerPort: 3000
