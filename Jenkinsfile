@@ -35,10 +35,10 @@ pipeline {
         stage("Clone/Pull Repo") {
             steps {
                 script {
-                    if (fileExists('gitops-argocd')) {
+                    if (fileExists('lightweight-next')) {
                         echo "Cloned repo already exists - Pulling latest changes"
 
-                        dir("gitops-argocd") {
+                        dir("lightweight-next") {
                             sh "git pull"
                         }
                     } else {
