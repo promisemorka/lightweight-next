@@ -32,6 +32,7 @@ pipeline {
             }
         }
 
+       
         stage("Clone/Pull Repo") {
             steps {
                 script {
@@ -39,11 +40,12 @@ pipeline {
                         echo "Cloned repo already exists - Pulling latest changes"
 
                         dir("lightweight-next") {
-                            sh "git pull"
+                            sh "git checkout update-argocd-config"
+                            sh "git pull origin update-argocd-config"
                         }
                     } else {
-                        echo "Repo does not exists - Cloning the repo"
-                        sh "git clone -b update-argocd-config https://github.com/promisemorka/lightweight-next.git"        
+                        echo "Repo does not exist - Cloning the repo"
+                        sh "git clone -b update-argocd-config https://github.com/promisemorka/lightweight-next.git"
                     }
                 }
             }
