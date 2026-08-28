@@ -5,7 +5,7 @@ pipeline {
         NAME = "light-weight-next"
         VERSION = "${env.BUILD_ID}"
         IMAGE_REPO = "softoloye"
-        GITHUB_TOKEN = credentials('Github-Token')
+        GITHUB_TOKEN = credentials('GitHub-Token')
     }
 
     stages {
