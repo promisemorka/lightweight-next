@@ -22,7 +22,7 @@ spec:
 
     spec:
       containers:
-      - image: softoloye/light-weight-v2:42
+      - image: softoloye/light-weight-next:10
         name: light-weight-v2
         env: 
           - name: AUTH_TRUST_HOST
