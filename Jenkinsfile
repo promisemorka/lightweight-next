@@ -5,7 +5,6 @@ pipeline {
         NAME = "light-weight-next"
         VERSION = "${env.BUILD_ID}"
         IMAGE_REPO = "softoloye"
-        ARGO_TOKEN = credentials('argocd-token')
         GITHUB_TOKEN = credentials('Github-Token')
     }
 
