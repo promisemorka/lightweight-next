@@ -1,3 +1,4 @@
+// CI pipeline for light weight
 pipeline {
     agent any
 
