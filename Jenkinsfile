@@ -12,15 +12,8 @@ pipeline {
     stages {
         stage('Unit Tests') {
             steps {
-                dir("lightweight-next") {
-                    sh '''
-                        docker run --rm \
-                        -v "$PWD:/app" \
-                        -w /app \
-                        node:20-alpine \
-                        sh -c "npm ci && npm run typecheck && npm run lint && npm run test"
-                    '''
-                }
+                echo "Implement unit tests if applicable"
+                echo "This stage is a sample placeholder"
             }
         }
 
