@@ -307,18 +307,30 @@ Raise PR
 
 ### Stage 1 --- Unit Tests
 
-The current stage is a placeholder:
+The stage installs dependencies and runs typecheck, lint, and the real
+Vitest suite against `lightweight-next/`:
 
 ``` groovy
 stage('Unit Tests') {
     steps {
-        echo "Implement unit tests if applicable"
-        echo "This stage is a sample placeholder"
+        dir("lightweight-next") {
+            sh "npm ci"
+            sh "npm run typecheck"
+            sh "npm run lint"
+            sh "npm run test"
+        }
     }
 }
 ```
 
-A future improvement is to run the real Vitest test suite here.
+The Vitest suite (`src/lib/**/*.test.ts`) covers the Zod validation
+schemas in `src/lib/validations/` and the `cn()` class-name helper in
+`src/lib/utils.ts` — pure functions with no database dependency, so
+they run fast and deterministically on the Jenkins agent without
+needing a Postgres/Neon connection. Server Actions and the
+DB-backed authorization guards in `src/lib/auth-guards.ts` are not yet
+covered; that requires a test database and is tracked as a future
+improvement, alongside Playwright E2E tests.
 
 ### Stage 2 --- Build Image
 
@@ -1291,17 +1303,14 @@ Kubernetes = runs the application
 The current pipeline works, but several improvements would make it more
 production-like.
 
-### Run real tests
+### Expand test coverage
 
-Replace the placeholder Jenkins test stage with actual commands such as:
-
-``` bash
-npm run typecheck
-npm run lint
-npm run test
-```
-
-and later Playwright E2E tests.
+The Jenkins Unit Tests stage now runs `npm run typecheck`, `npm run
+lint`, and `npm run test` (Vitest) for real, covering the validation
+schemas and shared utilities. Still outstanding: unit tests for Server
+Actions and `auth-guards.ts` against a test Postgres database (including
+the cross-user ownership regression case), and Playwright E2E tests
+(`test:e2e`) wired into the pipeline.
 
 ### Fix/verify Service target port
 
