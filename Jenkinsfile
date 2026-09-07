@@ -13,10 +13,13 @@ pipeline {
         stage('Unit Tests') {
             steps {
                 dir("lightweight-next") {
-                    sh "npm ci"
-                    sh "npm run typecheck"
-                    sh "npm run lint"
-                    sh "npm run test"
+                    sh '''
+                        docker run --rm \
+                        -v "$PWD:/app" \
+                        -w /app \
+                        node:20-alpine \
+                        sh -c "npm ci && npm run typecheck && npm run lint && npm run test"
+                    '''
                 }
             }
         }
