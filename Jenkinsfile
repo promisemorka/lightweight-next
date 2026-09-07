@@ -11,8 +11,12 @@ pipeline {
     stages {
         stage('Unit Tests') {
             steps {
-                echo "Implement unit tests if applicable"
-                echo "This stage is a sample placeholder"
+                dir("lightweight-next") {
+                    sh "npm ci"
+                    sh "npm run typecheck"
+                    sh "npm run lint"
+                    sh "npm run test"
+                }
             }
         }
 
@@ -73,12 +77,6 @@ pipeline {
             }
         }
 
-        // stage("Raise PR") {
-        //     steps {
-        //         sh "bash pr.sh"
-        //     }
-
-        // }
         stage("Raise PR") {
             steps {
                 withEnv(["GH_TOKEN=${GITHUB_TOKEN}"]) {
